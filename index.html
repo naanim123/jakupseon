@@ -1,0 +1,342 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f3f2ec">
+  <meta name="description" content="작업 범위, 수정 횟수, 결제 조건까지 분명한 프리랜서 견적 초안을 만들어 보세요.">
+  <title>작업선 — 프리랜서 견적 빌더</title>
+  <style>
+    :root{
+      color-scheme:light;
+      --paper:#f3f2ec;--surface:#fffefa;--ink:#1d2924;--muted:#69746d;--line:#e3e4dc;
+      --forest:#234e3b;--forest-dark:#183b2c;--lime:#d8f26a;--lime-soft:#edf4d6;--orange:#e48b68;
+      --danger:#a53e34;--shadow:0 22px 70px #28382b12;--radius:22px;--font: "42dot Sans","Pretendard","Apple SD Gothic Neo","Noto Sans KR",system-ui,sans-serif;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth;scroll-padding-top:24px}
+    body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--font);font-size:15px;line-height:1.58;-webkit-font-smoothing:antialiased}
+    button,input,textarea,select{font:inherit}
+    button{cursor:pointer}
+    a{color:inherit}
+    :focus-visible{outline:3px solid #76a35c;outline-offset:3px}
+    .shell{width:min(1220px,calc(100% - 56px));margin-inline:auto}
+    .topbar{height:78px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #dfe0d7}
+    .brand{display:inline-flex;align-items:center;gap:11px;text-decoration:none;font-weight:800;letter-spacing:-.055em;font-size:19px}
+    .brand-mark{width:36px;height:36px;border-radius:12px;background:var(--forest);display:grid;place-items:center;color:var(--lime);position:relative;overflow:hidden}
+    .brand-mark svg{width:22px;height:22px}
+    .topnav{display:flex;align-items:center;gap:23px;font-size:12px;color:#5d6962}
+    .topnav a{text-decoration:none}.topnav a:hover{color:var(--forest)}
+    .top-cta{border:1px solid #cdd3c9;border-radius:100px;padding:9px 15px;color:var(--forest);font-weight:750}
+    .hero{padding:66px 0 54px;display:grid;grid-template-columns:minmax(0,1.04fr) minmax(370px,.96fr);gap:54px;align-items:center}
+    .kicker{display:flex;align-items:center;gap:9px;font-size:11px;text-transform:uppercase;letter-spacing:.14em;color:var(--forest);font-weight:800}
+    .kicker:before{content:"";width:22px;height:1px;background:var(--orange)}
+    h1{font-size:clamp(41px,5vw,68px);line-height:1.08;letter-spacing:-.075em;margin:20px 0 18px;font-weight:750}
+    .hero-copy{max-width:515px;color:#58655d;font-size:16px;line-height:1.8;margin:0}
+    .hero-actions{display:flex;align-items:center;gap:18px;margin-top:29px}
+    .button{border:0;border-radius:12px;padding:14px 19px;display:inline-flex;align-items:center;justify-content:center;gap:10px;text-decoration:none;font-weight:800;letter-spacing:-.02em;transition:transform .16s,background .16s,box-shadow .16s}
+    .button:hover{transform:translateY(-2px)}
+    .button-primary{background:var(--forest);color:white;box-shadow:0 8px 18px #234e3b21}
+    .button-primary:hover{background:var(--forest-dark);box-shadow:0 11px 24px #234e3b2a}
+    .button-secondary{background:var(--surface);border:1px solid var(--line);color:var(--forest)}
+    .text-link{color:#53645a;font-size:12px;font-weight:700;text-decoration:none;border-bottom:1px solid #b8c0b8;padding-bottom:2px}
+    .hero-notes{display:flex;gap:17px;flex-wrap:wrap;margin-top:24px;color:#79847b;font-size:11px}
+    .hero-notes span{display:inline-flex;gap:6px;align-items:center}.tick{color:#437658;font-weight:900}
+    .hero-art{min-height:362px;background:var(--forest);border-radius:28px;padding:24px;position:relative;overflow:hidden;box-shadow:0 24px 55px #1c392a1c}
+    .hero-art:before{content:"";width:320px;height:320px;border:1px solid #ffffff17;border-radius:50%;position:absolute;right:-94px;top:-176px;box-shadow:0 0 0 34px #ffffff08,0 0 0 69px #ffffff06}
+    .art-label{color:#d2decf;font-size:10px;letter-spacing:.14em;font-weight:800;display:flex;justify-content:space-between;position:relative}
+    .art-label span:last-child{color:var(--lime)}
+    .sample-doc{position:relative;margin:37px auto 0;width:min(355px,93%);background:#fffefa;border-radius:14px;padding:22px 23px 19px;transform:rotate(-2deg);box-shadow:0 18px 30px #10241935}
+    .sample-line{height:1px;background:#e8e8df;margin:15px 0}
+    .sample-top{display:flex;align-items:start;justify-content:space-between;gap:8px}
+    .sample-micro{color:#718078;font-size:8px;letter-spacing:.12em;font-weight:800}
+    .sample-title{font-size:18px;letter-spacing:-.055em;font-weight:800;margin-top:3px}
+    .sample-tag{font-size:8px;background:var(--lime-soft);color:var(--forest);border-radius:30px;padding:5px 8px;font-weight:800;white-space:nowrap}
+    .sample-price-row{display:flex;justify-content:space-between;align-items:end}
+    .sample-price-label{font-size:9px;color:#748078}
+    .sample-price{font-size:23px;font-weight:850;letter-spacing:-.06em;color:var(--forest)}
+    .sample-info{display:grid;grid-template-columns:1fr 1fr;gap:14px;font-size:9px;color:#5e6c62}
+    .sample-info strong{display:block;font-size:9px;color:var(--ink);margin-bottom:4px}
+    .sample-stamp{position:absolute;right:24px;bottom:22px;width:53px;height:53px;border:1px solid #5d8167;border-radius:50%;display:grid;place-items:center;color:#43674e;font-size:8px;text-align:center;line-height:1.25;transform:rotate(11deg)}
+    .art-foot{position:absolute;bottom:20px;left:25px;right:25px;display:flex;justify-content:space-between;color:#bdcabe;font-size:10px;letter-spacing:.03em}
+    .work-section{padding:28px 0 84px;scroll-margin-top:20px}
+    .work-heading{display:flex;justify-content:space-between;align-items:end;gap:22px;margin-bottom:17px}
+    .work-heading h2{font-size:25px;letter-spacing:-.06em;margin:0}
+    .work-heading p{margin:5px 0 0;color:var(--muted);font-size:12px}
+    .save-status{display:inline-flex;align-items:center;gap:7px;color:#778178;font-size:11px;white-space:nowrap}
+    .save-dot{width:7px;height:7px;border-radius:50%;background:#7eaa7c}
+    .workspace{display:grid;grid-template-columns:minmax(0,1fr) minmax(370px,.83fr);align-items:start;gap:18px}
+    .editor,.preview-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}
+    .editor{overflow:hidden}
+    .stepper{display:grid;grid-template-columns:repeat(3,1fr);padding:17px 22px 15px;border-bottom:1px solid var(--line);gap:7px}
+    .step-tab{min-width:0;background:none;border:0;text-align:left;padding:8px 9px;border-radius:12px;color:#869088;display:flex;align-items:center;gap:9px;transition:background .15s,color .15s}
+    .step-tab:hover{background:#f4f5ed;color:var(--ink)}
+    .step-tab[aria-current="step"]{color:var(--forest);background:#edf2e7}
+    .step-num{flex:none;width:25px;height:25px;border-radius:50%;background:#eff0e9;display:grid;place-items:center;font-size:10px;font-weight:800}
+    .step-tab[aria-current="step"] .step-num{background:var(--forest);color:white}
+    .step-tab.is-done .step-num{background:var(--lime);color:var(--forest)}
+    .step-label{display:block;font-size:11px;font-weight:800;line-height:1.25}
+    .step-caption{display:block;font-size:9px;margin-top:3px;opacity:.75}
+    .form-body{padding:25px 27px 23px}
+    .step-panel[hidden]{display:none}
+    .form-intro{margin-bottom:20px}
+    .form-intro h3{font-size:19px;letter-spacing:-.045em;margin:0}
+    .form-intro p{font-size:12px;color:var(--muted);margin:5px 0 0}
+    .fields{display:grid;grid-template-columns:1fr 1fr;gap:14px 13px}
+    .field{min-width:0;display:flex;flex-direction:column;gap:6px}
+    .field.span-2{grid-column:1/-1}
+    .field-label{font-size:11px;font-weight:800;color:#394940;display:flex;align-items:center;justify-content:space-between;gap:10px}
+    .optional{font-size:9px;color:#929a91;font-weight:600}
+    .control{width:100%;height:44px;background:white;color:var(--ink);border:1px solid #dcdfd7;border-radius:10px;padding:10px 12px;outline:none;transition:border-color .15s,box-shadow .15s}
+    .control:focus{border-color:#588268;box-shadow:0 0 0 3px #315f4318}
+    .control::placeholder{color:#a7aea6}
+    .control[aria-invalid="true"]{border-color:var(--danger);box-shadow:0 0 0 3px #a53e3412}
+    select.control{appearance:none;background:white url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16' fill='none' stroke='%2369746d' stroke-width='1.5'%3E%3Cpath d='m4 6 4 4 4-4'/%3E%3C/svg%3E") no-repeat right 12px center;padding-right:34px}
+    textarea.control{height:auto;min-height:98px;line-height:1.55;resize:vertical}
+    .hint{font-size:10px;color:#818a81;line-height:1.45}
+    .counter{font-variant-numeric:tabular-nums}
+    .input-unit{position:relative}.input-unit .control{padding-right:46px}.unit{position:absolute;right:12px;top:12px;color:#8b948b;font-size:11px;pointer-events:none}
+    .range-wrap{display:flex;align-items:center;gap:13px;height:44px;padding:0 11px;border:1px solid #dcdfd7;border-radius:10px;background:#fff}
+    input[type="range"]{accent-color:var(--forest);width:100%;height:4px}
+    .range-value{font-size:11px;min-width:35px;text-align:right;font-weight:850;color:var(--forest)}
+    .step-footer{display:flex;align-items:center;justify-content:space-between;gap:12px;border-top:1px solid #ecece5;padding-top:17px;margin-top:23px}
+    .step-footer .button{font-size:12px;padding:11px 15px}
+    .quiet-btn{border:0;background:none;color:#6f7a71;font-size:11px;font-weight:750;padding:10px 2px}
+    .quiet-btn:hover{color:var(--forest)}
+    .terms-note{margin-top:16px;padding:11px 13px;background:#f5f5ef;border-radius:10px;color:#707b72;font-size:10px;line-height:1.55}
+    .preview-card{position:sticky;top:18px;overflow:hidden}
+    .preview-head{display:flex;align-items:center;justify-content:space-between;padding:19px 21px 16px;border-bottom:1px solid var(--line)}
+    .preview-head h3{font-size:13px;margin:0;letter-spacing:-.02em}
+    .live-pill{display:inline-flex;align-items:center;gap:6px;border-radius:50px;padding:5px 8px;background:#edf5e9;color:#48714d;font-size:9px;font-weight:800}
+    .live-pill:before{content:"";width:6px;height:6px;border-radius:50%;background:#75a967}
+    .quote{padding:25px 25px 18px}
+    .quote-kicker{font-size:9px;color:#8a9389;font-weight:850;letter-spacing:.17em}
+    .quote-title{font-size:23px;line-height:1.3;letter-spacing:-.055em;margin:7px 0 4px;overflow-wrap:anywhere}
+    .quote-meta{font-size:10px;color:#758077}
+    .quote-value{background:#edf2e7;border-radius:13px;padding:13px 15px;margin:18px 0 17px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+    .quote-value small{display:block;font-size:9px;color:#748071;font-weight:750}
+    .quote-amount{display:block;font-size:23px;color:var(--forest);font-weight:850;letter-spacing:-.06em;white-space:nowrap;line-height:1.25}
+    .rate-note{font-size:9px;color:#748071;margin-top:4px;line-height:1.4}
+    .rate-note.warn{color:var(--danger)}
+    .quote-block{margin-top:14px}
+    .quote-block h4{font-size:9px;letter-spacing:.11em;text-transform:uppercase;color:#838d83;margin:0 0 5px}
+    .quote-block p{font-size:11px;line-height:1.65;color:#39473e;margin:0;white-space:pre-line;overflow-wrap:anywhere}
+    .quote-details{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:16px}
+    .detail{border:1px solid #e8e9e1;border-radius:9px;padding:9px 10px;min-width:0}
+    .detail small{display:block;font-size:8px;color:#8a9389;margin-bottom:3px}
+    .detail strong{display:block;font-size:10px;line-height:1.45;overflow-wrap:anywhere}
+    .quote-end{margin-top:15px;border-top:1px solid #ecece5;padding-top:11px;font-size:9px;line-height:1.55;color:#8a9188}
+    .preview-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0 21px 20px}
+    .preview-actions .button{font-size:10px;padding:10px 8px;border-radius:9px}
+    .preview-actions .button-primary{grid-column:1/-1}
+    .local-note{font-size:9px;color:#8a9389;display:flex;align-items:center;gap:6px;grid-column:1/-1}
+    .how-section{padding:0 0 70px;scroll-margin-top:24px}
+    .how-heading{margin-bottom:17px}
+    .how-kicker{font-size:10px;color:var(--forest);font-weight:850;letter-spacing:.14em;margin:0 0 6px}
+    .how-heading h2{font-size:25px;letter-spacing:-.06em;margin:0}
+    .how-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+    .how-card{padding:20px;background:var(--surface);border:1px solid var(--line);border-radius:16px;min-height:132px}
+    .how-index{font-size:10px;color:#809079;font-weight:850;letter-spacing:.08em}
+    .how-card h3{font-size:14px;letter-spacing:-.035em;margin:11px 0 5px}
+    .how-card p{font-size:11px;line-height:1.6;color:var(--muted);margin:0}
+    .privacy-ribbon{display:flex;justify-content:space-between;align-items:center;gap:16px;background:#e8ecdf;border-radius:14px;padding:14px 18px;margin-top:12px}
+    .privacy-ribbon p{font-size:10px;color:#536451;line-height:1.5;margin:0}
+    .privacy-ribbon strong{color:var(--forest)}
+    .privacy-ribbon a{font-size:10px;font-weight:850;text-decoration:none;color:var(--forest);white-space:nowrap}
+    .product-section{padding:0 0 72px;scroll-margin-top:24px}
+    .product-card{display:grid;grid-template-columns:minmax(0,1fr) 285px;gap:28px;align-items:center;background:var(--forest);border-radius:22px;padding:30px 34px;color:white;position:relative;overflow:hidden}
+    .product-card:after{content:"";position:absolute;width:260px;height:260px;border:1px solid #ffffff1c;border-radius:50%;right:-70px;top:-154px;box-shadow:0 0 0 34px #ffffff0b,0 0 0 68px #ffffff08}
+    .product-overline{font-size:10px;letter-spacing:.14em;color:var(--lime);font-weight:850;margin:0 0 8px}
+    .product-card h2{font-size:28px;letter-spacing:-.06em;line-height:1.2;margin:0}
+    .product-card p{font-size:12px;line-height:1.65;color:#d7e0d4;max-width:610px;margin:11px 0 0}
+    .product-list{display:flex;flex-wrap:wrap;gap:8px 15px;margin-top:17px;font-size:10px;color:#e8eee5}.product-list span:before{content:"✓";color:var(--lime);font-weight:900;margin-right:6px}
+    .price-box{position:relative;z-index:1;background:var(--surface);border-radius:16px;padding:20px;color:var(--ink);box-shadow:0 14px 30px #10241925}
+    .price-box .label{font-size:9px;color:var(--muted);font-weight:800}.price{font-size:29px;color:var(--forest);font-weight:850;letter-spacing:-.065em;line-height:1.25;margin:4px 0}.price-note{font-size:9px;color:#778178;line-height:1.45;margin:0 0 13px}.price-box .button{width:100%;font-size:11px;padding:12px}.price-box .subnote{font-size:8px;text-align:center;color:#879087;margin:9px 0 0}
+    .mobile-preview-toggle{display:none}
+    .footer{display:flex;justify-content:space-between;gap:14px;border-top:1px solid #dfe0d7;padding:19px 0 30px;color:#858d83;font-size:10px}
+    .footer a{color:#5f7564;text-decoration:none}
+    .toast{position:fixed;left:50%;bottom:24px;z-index:20;transform:translate(-50%,14px);opacity:0;pointer-events:none;padding:11px 16px;border-radius:999px;background:#1c3327;color:#fff;font-size:12px;font-weight:700;box-shadow:0 12px 28px #18291d30;transition:opacity .18s,transform .18s}
+    .toast.show{opacity:1;transform:translate(-50%,0)}
+    .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+    @media(max-width:940px){.shell{width:min(100% - 40px,760px)}.hero{grid-template-columns:1fr;gap:28px;padding:48px 0 40px}.hero-art{min-height:335px}.workspace{grid-template-columns:minmax(0,1fr) minmax(310px,.84fr);gap:12px}.form-body{padding:22px 20px}.stepper{padding-inline:14px}.step-tab{padding-inline:5px}.step-caption{display:none}.quote{padding-inline:19px}.preview-head{padding-inline:19px}.preview-actions{padding-inline:19px}}
+    @media(max-width:700px){.shell{width:min(100% - 30px,560px)}.topbar{height:66px}.topnav{gap:12px}.topnav a:not(.top-cta){display:none}.hero{padding:39px 0 28px;gap:22px}.hero-copy{font-size:14px}.hero-art{min-height:310px;padding:20px}.sample-doc{margin-top:29px}.workspace{display:flex;flex-direction:column;gap:12px}.editor{width:100%;order:1}.preview-card{position:relative;top:auto;width:100%;order:2}.preview-card.collapsed .quote,.preview-card.collapsed .preview-actions{display:none}.mobile-preview-toggle{display:inline-flex;border:0;background:none;color:var(--forest);font-size:10px;font-weight:800;padding:5px 0}.preview-head{align-items:center}.work-heading{align-items:start}.work-heading h2{font-size:22px}.work-heading p{max-width:260px}.save-status{margin-top:5px}.work-section{padding-bottom:50px}.product-section{padding-bottom:48px}.product-card{grid-template-columns:1fr;gap:20px;padding:25px}.product-card h2{font-size:25px}.price-box{max-width:340px;width:100%}.how-section{padding-bottom:45px}.how-heading h2{font-size:22px}.how-grid{grid-template-columns:1fr;gap:8px}.how-card{min-height:0;padding:15px 16px}.how-card h3{margin:7px 0 3px}.privacy-ribbon{align-items:start}.footer{flex-direction:column}}
+    @media(max-width:480px){.shell{width:calc(100% - 24px)}.brand{font-size:17px}.top-cta{font-size:10px;padding:8px 12px}.hero{padding-top:33px}h1{font-size:43px;margin:16px 0 14px}.hero-copy{font-size:13px;line-height:1.75}.hero-actions{margin-top:21px;gap:12px}.hero-actions .button{font-size:12px;padding:12px 14px}.hero-notes{gap:8px 13px;font-size:9px}.hero-art{min-height:286px;border-radius:21px;padding:17px}.sample-doc{margin-top:25px;padding:18px 18px 16px}.sample-title{font-size:16px}.sample-price{font-size:21px}.sample-stamp{width:45px;height:45px;right:17px;bottom:17px}.art-foot{bottom:14px;left:17px;right:17px;font-size:8px}.work-heading{display:block}.save-status{display:inline-flex;margin-top:9px}.stepper{padding:11px 9px;gap:3px}.step-tab{gap:6px;padding:7px 4px}.step-num{width:22px;height:22px;font-size:9px}.step-label{font-size:9px}.form-body{padding:20px 15px}.fields{grid-template-columns:1fr;gap:12px}.field.span-2{grid-column:auto}.control{height:45px}.step-footer .button{font-size:11px;padding:10px 12px}.quiet-btn{font-size:10px}.quote{padding:21px 18px 17px}.quote-title{font-size:21px}.quote-amount{font-size:22px}.preview-head{padding-inline:18px}.preview-actions{padding-inline:18px}.local-note{line-height:1.45}.work-heading p{font-size:11px}.privacy-ribbon{padding:12px}.privacy-ribbon p,.privacy-ribbon a{font-size:9px}}
+    @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important}}
+    @media print{body{background:white;font-size:12px}.topbar,.hero,.work-heading,.editor,.preview-head,.preview-actions,.footer,.mobile-preview-toggle,.toast{display:none!important}.shell{width:100%;margin:0}.work-section{padding:0}.workspace{display:block}.preview-card{display:block!important;position:static;border:0;border-radius:0;box-shadow:none}.quote{padding:14mm 16mm}.quote-title{font-size:26px}.quote-value{print-color-adjust:exact;-webkit-print-color-adjust:exact}.quote-details{grid-template-columns:1fr 1fr}.quote-block p{font-size:12px}.quote-end{font-size:10px}}
+  </style>
+</head>
+<body>
+  <header class="shell topbar">
+    <a class="brand" href="#top" aria-label="작업선 홈으로 이동">
+      <span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M5 17.5 12 4l7 13.5M8 13h8M6.7 17.5h10.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="4" r="1.3" fill="currentColor"/></svg></span>
+      <span>작업선</span>
+    </a>
+    <nav class="topnav" aria-label="주요 메뉴"><a href="#how">사용 방법</a><a href="#editor" class="top-cta">견적 만들기 <span aria-hidden="true">↗</span></a></nav>
+  </header>
+  <main id="top" class="shell">
+    <section class="hero" aria-labelledby="heroTitle">
+      <div class="hero-text">
+        <div class="kicker">A clearer way to quote</div>
+        <h1 id="heroTitle">일의 경계를 정리하면,<br>협의가 쉬워져요.</h1>
+        <p class="hero-copy">얼마를 받을지부터 막막하다면, 먼저 어떤 일을 어디까지 할지 정해보세요. 작업선이 금액과 진행 조건을 담은 견적 초안을 함께 만듭니다.</p>
+        <div class="hero-actions"><a class="button button-primary" href="#editor">무료로 견적 만들기 <span aria-hidden="true">↓</span></a><a class="text-link" href="#how">어떻게 쓰나요?</a></div>
+        <div class="hero-notes"><span><b class="tick">✓</b> 가입 없이 바로 시작</span><span><b class="tick">✓</b> 입력 내용은 내 기기에 저장</span><span><b class="tick">✓</b> 복사하거나 PDF로 전달</span></div>
+      </div>
+      <div class="hero-art" aria-label="작업선으로 작성한 견적서 예시">
+        <div class="art-label"><span>WORK, WELL DEFINED.</span><span>QUOTE No. 024</span></div>
+        <div class="sample-doc">
+          <div class="sample-top"><div><div class="sample-micro">PROJECT QUOTE · 2026</div><div class="sample-title">브랜드 소개 페이지</div></div><span class="sample-tag">DRAFT READY</span></div>
+          <div class="sample-line"></div>
+          <div class="sample-price-row"><div><div class="sample-price-label">제안 금액 · VAT 별도 협의</div><div class="sample-price">1,200,000원</div></div><span class="sample-tag">범위 명확</span></div>
+          <div class="sample-line"></div>
+          <div class="sample-info"><div><strong>포함 작업</strong>메인 1종 · 모바일 1종<br>최종 파일 전달</div><div><strong>진행 조건</strong>수정 2회 · 10영업일<br>착수금 50%</div></div>
+          <span class="sample-stamp">SCOPE<br>DEFINED</span>
+        </div>
+        <div class="art-foot"><span>좋은 협의는 선명한 범위에서.</span><span>01 — 03</span></div>
+      </div>
+    </section>
+    <section class="work-section" id="editor" aria-labelledby="editorTitle">
+      <div class="work-heading"><div><h2 id="editorTitle">이번 작업의 견적 만들기</h2><p>세 단계만 채우면 초안이 완성돼요. 입력하는 대로 오른쪽 문서에 반영됩니다.</p></div><span class="save-status" id="saveStatus" aria-live="polite"><i class="save-dot" aria-hidden="true"></i><span>이 기기에 자동 저장</span></span></div>
+      <div class="workspace">
+        <section class="editor" aria-label="견적 작성 폼">
+          <nav class="stepper" aria-label="견적 작성 단계">
+            <button class="step-tab" type="button" data-step="0" aria-current="step"><span class="step-num">1</span><span><span class="step-label">기본 정보</span><span class="step-caption">누구와 어떤 일</span></span></button>
+            <button class="step-tab" type="button" data-step="1"><span class="step-num">2</span><span><span class="step-label">작업 범위</span><span class="step-caption">무엇을 어디까지</span></span></button>
+            <button class="step-tab" type="button" data-step="2"><span class="step-num">3</span><span><span class="step-label">금액과 조건</span><span class="step-caption">얼마에 어떻게</span></span></button>
+          </nav>
+          <form id="quoteForm" novalidate>
+            <div class="form-body">
+              <section class="step-panel" data-panel="0" aria-labelledby="stepTitle0">
+                <div class="form-intro"><h3 id="stepTitle0">일의 첫 단추를 채워요</h3><p>나중에 문서를 전달할 때 필요한 기본 정보예요.</p></div>
+                <div class="fields">
+                  <div class="field span-2"><label class="field-label" for="title">프로젝트 이름</label><input class="control" id="title" name="title" value="브랜드 소개 페이지 디자인" maxlength="60" required autocomplete="off"><span class="hint">결과물이나 의뢰 내용을 한 줄로 적어주세요.</span></div>
+                  <div class="field"><label class="field-label" for="client">의뢰인 / 회사명 <span class="optional">선택</span></label><input class="control" id="client" name="client" placeholder="예: 김하늘 님" maxlength="60" autocomplete="organization"></div>
+                  <div class="field"><label class="field-label" for="service">작업 분야</label><select class="control" id="service" name="service"><option>디자인</option><option>영상 제작</option><option>글쓰기·콘텐츠</option><option>마케팅</option><option>개발</option><option>사진</option><option>기타 서비스</option></select></div>
+                </div>
+                <div class="step-footer"><button class="quiet-btn" type="button" id="loadExample">예시 다시 불러오기</button><button class="button button-primary next-step" type="button">범위 정하기 <span aria-hidden="true">→</span></button></div>
+              </section>
+              <section class="step-panel" data-panel="1" aria-labelledby="stepTitle1" hidden>
+                <div class="form-intro"><h3 id="stepTitle1">포함 범위를 또렷하게</h3><p>결과물과 수량, 추가 비용이 생기는 일을 나눠 적어요.</p></div>
+                <div class="fields">
+                  <div class="field span-2"><label class="field-label" for="deliverables">이번 금액에 포함되는 작업</label><textarea class="control" id="deliverables" name="deliverables" maxlength="500" required>메인 페이지 시안 1종 · 모바일 화면 1종 · 최종 디자인 파일 전달</textarea><span class="hint">결과물, 수량, 전달 방식을 구체적으로 적어주세요. <span class="counter" id="deliverablesCount">0 / 500</span></span></div>
+                  <div class="field span-2"><label class="field-label" for="excluded">포함되지 않는 작업 <span class="optional">선택</span></label><textarea class="control" id="excluded" name="excluded" maxlength="400">로고 제작 · 카피라이팅 · 추가 페이지 제작</textarea><span class="hint">이번 계약에 포함되지 않는 일을 적어 기대 차이를 줄여요. <span class="counter" id="excludedCount">0 / 400</span></span></div>
+                </div>
+                <div class="step-footer"><button class="quiet-btn previous-step" type="button">← 기본 정보</button><button class="button button-primary next-step" type="button">금액과 조건 정하기 <span aria-hidden="true">→</span></button></div>
+              </section>
+              <section class="step-panel" data-panel="2" aria-labelledby="stepTitle2" hidden>
+                <div class="form-intro"><h3 id="stepTitle2">지속 가능한 금액과 조건</h3><p>세금 자동 계산이 아닌 내 기준 견적을 가늠해요.</p></div>
+                <div class="fields">
+                  <div class="field"><label class="field-label" for="hours">예상 작업 시간</label><div class="input-unit"><input class="control" id="hours" name="hours" type="number" min="1" max="9999" step="1" value="18" inputmode="numeric"><span class="unit">시간</span></div></div>
+                  <div class="field"><label class="field-label" for="rate">목표 시간당 수입</label><div class="input-unit"><input class="control" id="rate" name="rate" type="number" min="0" max="100000000" step="1000" value="40000" inputmode="numeric"><span class="unit">원</span></div></div>
+                  <div class="field span-2"><label class="field-label" for="overhead">견적 여유분 <span class="optional">세율이 아니에요</span></label><div class="range-wrap"><input id="overhead" name="overhead" type="range" min="0" max="50" step="1" value="20" aria-describedby="overheadHint"><output class="range-value" id="overheadLabel" for="overhead">20%</output></div><span class="hint" id="overheadHint">도구·비청구 시간 등 본인이 정하는 여유분이에요. 실제 세금이나 보험료와는 다릅니다.</span></div>
+                  <div class="field span-2"><label class="field-label" for="price">의뢰인에게 제안할 총액</label><div class="input-unit"><input class="control" id="price" name="price" type="number" min="0" max="10000000000" step="10000" value="1200000" inputmode="numeric"><span class="unit">원</span></div><span class="hint" id="floorHint">내 기준 금액과 비교해 볼게요.</span></div>
+                  <div class="field"><label class="field-label" for="revisions">포함 수정 횟수</label><div class="input-unit"><input class="control" id="revisions" name="revisions" type="number" min="0" max="99" step="1" value="2" inputmode="numeric"><span class="unit">회</span></div></div>
+                  <div class="field"><label class="field-label" for="timeline">예상 작업 기간</label><div class="input-unit"><input class="control" id="timeline" name="timeline" type="number" min="1" max="999" step="1" value="10" inputmode="numeric"><span class="unit">영업일</span></div></div>
+                  <div class="field"><label class="field-label" for="payment">결제 방식</label><select class="control" id="payment" name="payment"><option>착수금 50% · 잔금 50%</option><option>착수금 30% · 중도금 40% · 잔금 30%</option><option>작업 완료 후 전액 결제</option><option>협의 후 결정</option></select></div>
+                  <div class="field"><label class="field-label" for="validity">견적 유효 기간</label><div class="input-unit"><input class="control" id="validity" name="validity" type="number" min="1" max="365" step="1" value="14" inputmode="numeric"><span class="unit">일</span></div></div>
+                  <div class="field span-2"><label class="field-label" for="extra">추가 요청 처리 기준 <span class="optional">선택</span></label><textarea class="control" id="extra" name="extra" maxlength="350">포함 범위를 벗어나는 요청은 진행 전 별도 일정과 비용을 안내합니다.</textarea></div>
+                </div>
+                <p class="terms-note">문서 초안은 작업 범위 협의를 돕기 위한 참고 자료예요. 세금·부가세·계약 조건은 실제 상황에 맞게 의뢰인과 확인해 주세요.</p>
+                <div class="step-footer"><button class="quiet-btn previous-step" type="button">← 작업 범위</button><button class="button button-primary" type="button" id="finishStep">초안 확인하기 <span aria-hidden="true">↗</span></button></div>
+              </section>
+            </div>
+          </form>
+        </section>
+        <aside class="preview-card" id="quotePreview" aria-labelledby="previewTitle">
+          <div class="preview-head"><div><h3 id="previewTitle">견적 초안</h3><span class="hint">지금 입력한 내용으로 만든 문서</span></div><span class="live-pill">실시간 반영</span><button class="mobile-preview-toggle" type="button" id="previewToggle" aria-expanded="true" aria-controls="quoteContent">접기 −</button></div>
+          <div id="quoteContent">
+            <div class="quote" id="quoteDocument">
+              <div class="quote-kicker">PROJECT QUOTE</div>
+              <h2 class="quote-title" id="outTitle">브랜드 소개 페이지 디자인</h2>
+              <div class="quote-meta"><span id="outClient">의뢰인 미입력</span><span> · </span><span id="outService">디자인</span></div>
+              <div class="quote-value"><div><small>제안 금액</small><div class="rate-note" id="priceHealth">설정한 작업 시간 기준을 확인하고 있어요.</div></div><output class="quote-amount" id="outPrice">1,200,000원</output></div>
+              <section class="quote-block"><h4>포함 작업</h4><p id="outDeliverables">메인 페이지 시안 1종 · 모바일 화면 1종 · 최종 디자인 파일 전달</p></section>
+              <section class="quote-block"><h4>별도 협의</h4><p id="outExcluded">로고 제작 · 카피라이팅 · 추가 페이지 제작</p></section>
+              <div class="quote-details"><div class="detail"><small>포함 수정</small><strong id="outRevisions">2회</strong></div><div class="detail"><small>예상 기간</small><strong id="outTimeline">10영업일</strong></div><div class="detail"><small>결제 방식</small><strong id="outPayment">착수금 50% · 잔금 50%</strong></div><div class="detail"><small>견적 유효 기간</small><strong id="outValidity">발행일로부터 14일</strong></div></div>
+              <section class="quote-block"><h4>범위 변경 시</h4><p id="outExtra">포함 범위를 벗어나는 요청은 진행 전 별도 일정과 비용을 안내합니다.</p></section>
+              <div class="quote-end">본 초안은 의뢰 범위 협의를 돕기 위한 참고 자료입니다. 세금·부가세·계약 조건은 당사자 간 확인 후 확정하세요.</div>
+            </div>
+            <div class="preview-actions"><button class="button button-primary" id="copyBtn" type="button">견적 문구 복사 <span aria-hidden="true">⧉</span></button><button class="button button-secondary" id="printBtn" type="button">PDF로 저장</button><button class="button button-secondary" id="textBtn" type="button">텍스트 파일</button><span class="local-note"><span aria-hidden="true">◉</span> 입력 정보는 이 기기의 브라우저 안에서만 처리해요.</span></div>
+          </div>
+        </aside>
+      </div>
+    </section>
+    <section class="product-section" id="product" aria-labelledby="productTitle">
+      <div class="product-card">
+        <div><p class="product-overline">WORKLINE TEMPLATE PACK</p><h2 id="productTitle">견적 초안 다음에 바로 쓰는<br>프리랜서 견적서 템플릿 팩</h2><p>디자인·콘텐츠·마케팅 업무에 맞춘 세 가지 견적 문구와 범위 변경 안내문을 한 번에 제공합니다. 복사해서 편집한 뒤, 바로 보내세요.</p><div class="product-list"><span>한 번 결제</span><span>편집 가능한 문서 형식</span><span>결제 후 바로 다운로드</span></div></div>
+        <div class="price-box"><p class="label">출시 실험 가격</p><div class="price">9,900원</div><p class="price-note">구독 없음 · 결제 후 Gumroad에서 바로 다운로드</p><a class="button button-primary" id="buyPack" href="https://hansung68.gumroad.com/l/jakupseon-quote-templates" target="_blank" rel="noopener noreferrer">템플릿 팩 구매하기 <span aria-hidden="true">→</span></a><p class="subnote">결제와 파일 전달은 Gumroad에서 안전하게 진행됩니다.</p></div>
+      </div>
+    </section>
+    <section class="how-section" id="how" aria-labelledby="howTitle">
+      <div class="how-heading"><p class="how-kicker">HOW IT WORKS</p><h2 id="howTitle">협의의 시작, 세 단계면 충분해요.</h2></div>
+      <div class="how-grid">
+        <article class="how-card"><span class="how-index">01 / BRIEF</span><h3>일을 한 줄로 적어요</h3><p>의뢰와 결과물이 무엇인지 먼저 적으면 문서의 중심이 잡혀요.</p></article>
+        <article class="how-card"><span class="how-index">02 / SCOPE</span><h3>포함과 제외를 나눠요</h3><p>수량과 수정 횟수, 별도 협의할 일을 함께 정리해요.</p></article>
+        <article class="how-card"><span class="how-index">03 / SEND</span><h3>내 기준으로 전달해요</h3><p>금액과 결제 조건을 확인하고 문구 복사나 PDF로 저장하세요.</p></article>
+      </div>
+      <div class="privacy-ribbon"><p><strong>초안은 이 브라우저에 저장돼요.</strong> 저장 내용은 암호화·비밀번호 보호되지 않습니다. 공용 기기는 피하고, 주민번호·계좌·카드·건강정보 같은 민감정보는 입력하지 마세요. 사용 후 아래에서 저장 내용을 지울 수 있습니다.</p><a href="#editor">견적 만들기 ↗</a></div>
+    </section>
+    <footer class="footer"><span>작업선 · 처음 보내는 견적을 더 분명하게</span><span>브라우저 임시 저장을 지우려면 <button type="button" class="quiet-btn" id="clearDraft">저장 내용 삭제</button></span></footer>
+  </main>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script>
+    (()=>{
+      const $=id=>document.getElementById(id);
+      const fieldIds=['title','client','service','deliverables','excluded','hours','rate','overhead','price','revisions','timeline','payment','validity','extra'];
+      const draftKey='jakupseon.quoteDraft.v1';
+      const defaults={title:'브랜드 소개 페이지 디자인',client:'',service:'디자인',deliverables:'메인 페이지 시안 1종 · 모바일 화면 1종 · 최종 디자인 파일 전달',excluded:'로고 제작 · 카피라이팅 · 추가 페이지 제작',hours:'18',rate:'40000',overhead:'20',price:'1200000',revisions:'2',timeline:'10',payment:'착수금 50% · 잔금 50%',validity:'14',extra:'포함 범위를 벗어나는 요청은 진행 전 별도 일정과 비용을 안내합니다.'};
+      let activeStep=0,saveTimer,toastTimer;
+      const clean=n=>Math.max(0,Number.isFinite(Number(n))?Number(n):0);
+      const formatted=n=>new Intl.NumberFormat('ko-KR').format(Math.round(clean(n)))+'원';
+      const value=id=>$(id).value.trim();
+      const setText=(id,v)=>$(id).textContent=v;
+      function setStep(next,focusHeading=true){
+        activeStep=Math.max(0,Math.min(2,next));
+        document.querySelectorAll('.step-panel').forEach((panel,i)=>{panel.hidden=i!==activeStep});
+        document.querySelectorAll('.step-tab').forEach((tab,i)=>{tab.toggleAttribute('aria-current',i===activeStep);if(i===activeStep)tab.setAttribute('aria-current','step');else tab.removeAttribute('aria-current');tab.classList.toggle('is-done',i<activeStep)});
+        if(focusHeading){const h=$(`stepTitle${activeStep}`);h.setAttribute('tabindex','-1');h.focus({preventScroll:true})}
+      }
+      function saveDraft(){
+        try{const data={};fieldIds.forEach(id=>data[id]=$(id).value);localStorage.setItem(draftKey,JSON.stringify(data));setText('saveStatus','이 기기에 저장됨')}
+        catch{setText('saveStatus','이 기기 저장을 사용할 수 없음')}
+      }
+      function scheduleSave(){setText('saveStatus','저장 중…');clearTimeout(saveTimer);saveTimer=setTimeout(saveDraft,250)}
+      function restoreDraft(){
+        try{const saved=JSON.parse(localStorage.getItem(draftKey)||'null');if(saved&&typeof saved==='object')fieldIds.forEach(id=>{if(Object.hasOwn(saved,id)&&$(id))$(id).value=String(saved[id])})}
+        catch{try{localStorage.removeItem(draftKey)}catch{setText('saveStatus','이 기기 저장을 사용할 수 없음')}}
+      }
+      function render(){
+        const hours=clean(value('hours')),rate=clean(value('rate')),buffer=clean(value('overhead'))/100,price=clean(value('price'));
+        const floor=hours&&rate?hours*rate/(1-buffer||1):0;
+        setText('overheadLabel',`${Math.round(buffer*100)}%`);
+        setText('outTitle',value('title')||'프로젝트 이름');setText('outClient',value('client')||'의뢰인 미입력');setText('outService',value('service'));
+        setText('outPrice',formatted(price));setText('outDeliverables',value('deliverables')||'포함 작업을 입력해 주세요.');setText('outExcluded',value('excluded')||'별도 협의 항목 없음');
+        setText('outRevisions',`${clean(value('revisions'))}회`);setText('outTimeline',`${clean(value('timeline'))}영업일`);setText('outPayment',value('payment'));setText('outValidity',`발행일로부터 ${clean(value('validity'))}일`);setText('outExtra',value('extra')||'범위가 바뀌면 일정과 비용을 다시 협의합니다.');
+        setText('floorHint',floor?`내 기준 금액은 약 ${formatted(floor)}예요. 여유분 ${Math.round(buffer*100)}%를 반영했어요.`:'작업 시간과 목표 단가를 입력하면 내 기준 금액을 계산해요.');
+        const health=$('priceHealth');health.classList.remove('warn');
+        if(!hours||!rate){health.textContent='작업 시간과 목표 단가를 입력하면 비교할 수 있어요.'}
+        else if(price<floor){health.textContent=`내 기준보다 ${formatted(floor-price)} 낮아요 · 단순 참고`;health.classList.add('warn')}
+        else{health.textContent=`기준 시간당 약 ${formatted(price*(1-buffer)/hours)} · 세금 계산 아님`}
+        setText('deliverablesCount',`${$('deliverables').value.length} / 500`);setText('excludedCount',`${$('excluded').value.length} / 400`);
+      }
+      function docText(){return `${value('title')||'프로젝트 견적'}\n의뢰인: ${value('client')||'미입력'}\n분야: ${value('service')}\n\n제안 금액: ${formatted(value('price'))}\n\n포함 작업\n${value('deliverables')||'별도 기재 없음'}\n\n포함되지 않는 작업\n${value('excluded')||'없음'}\n\n포함 수정: ${clean(value('revisions'))}회\n예상 기간: ${clean(value('timeline'))}영업일\n결제: ${value('payment')}\n견적 유효 기간: 발행일로부터 ${clean(value('validity'))}일\n\n범위 변경 시\n${value('extra')||'진행 전 별도 협의'}\n\n본 초안은 의뢰 범위 협의를 돕기 위한 참고 자료입니다. 세금·부가세·계약 조건은 당사자 간 확인 후 확정하세요.`}
+      function toast(message){const el=$('toast');el.textContent=message;el.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('show'),1900)}
+      function validateCurrent(){const required=activeStep===0?['title']:activeStep===1?['deliverables']:[];let ok=true;for(const id of required){const el=$(id);const valid=Boolean(el.value.trim());el.setAttribute('aria-invalid',String(!valid));if(!valid){ok=false;el.focus();break}}if(!ok)toast('필수 내용을 입력해 주세요.');return ok}
+      async function copyQuote(){try{await navigator.clipboard.writeText(docText())}catch{const ta=document.createElement('textarea');ta.value=docText();ta.setAttribute('readonly','');ta.style.position='fixed';ta.style.opacity='0';document.body.append(ta);ta.select();document.execCommand('copy');ta.remove()}toast('견적 문구를 복사했어요.')}
+      function downloadText(){const blob=new Blob([docText()],{type:'text/plain;charset=utf-8'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`${(value('title')||'작업선-견적').replace(/[\\/:*?"<>|]/g,'-')}-견적초안.txt`;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);toast('텍스트 파일을 저장했어요.')}
+      restoreDraft();render();
+      fieldIds.forEach(id=>{const el=$(id);el.addEventListener('input',()=>{if(el.hasAttribute('aria-invalid'))el.removeAttribute('aria-invalid');render();scheduleSave()});el.addEventListener('change',()=>{render();scheduleSave()})});
+      document.querySelectorAll('.step-tab').forEach(tab=>tab.addEventListener('click',()=>{setStep(Number(tab.dataset.step));$('editor').scrollIntoView({behavior:'smooth',block:'start'})}));
+      document.querySelectorAll('.next-step').forEach(btn=>btn.addEventListener('click',()=>{if(validateCurrent())setStep(activeStep+1)}));
+      document.querySelectorAll('.previous-step').forEach(btn=>btn.addEventListener('click',()=>setStep(activeStep-1)));
+      $('finishStep').addEventListener('click',()=>{saveDraft();$('quotePreview').scrollIntoView({behavior:'smooth',block:'center'});toast('견적 초안을 확인하고 복사하거나 저장해 보세요.')});
+      $('copyBtn').addEventListener('click',copyQuote);$('printBtn').addEventListener('click',()=>window.print());$('textBtn').addEventListener('click',downloadText);
+      $('loadExample').addEventListener('click',()=>{fieldIds.forEach(id=>$(id).value=defaults[id]);render();scheduleSave();toast('예시 내용을 불러왔어요.')});
+      $('clearDraft').addEventListener('click',()=>{clearTimeout(saveTimer);try{localStorage.removeItem(draftKey)}catch{}fieldIds.forEach(id=>$(id).value=defaults[id]);render();setText('saveStatus','예시로 다시 시작');toast('저장한 초안을 지우고 예시로 돌아왔어요.')});
+      $('previewToggle').addEventListener('click',()=>{const card=$('quotePreview'),isCollapsed=card.classList.toggle('collapsed');$('previewToggle').setAttribute('aria-expanded',String(!isCollapsed));$('previewToggle').textContent=isCollapsed?'미리보기 열기 +':'접기 −'});
+      $('quoteForm').addEventListener('submit',event=>event.preventDefault());
+    })();
+  </script>
+</body>
+</html>
+
