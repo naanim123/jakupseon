@@ -24,6 +24,10 @@
 
 무료 도구만으로도 기본 견적 초안을 작성할 수 있습니다. 유료 상품은 **₩9,900 일회 결제 다운로드**이며, 구독은 없습니다. 구매 전에 [전체 구성과 조건](https://hansung68.gumroad.com/l/jakupseon-quote-templates?utm_source=github&utm_medium=organic&utm_campaign=launch)을 확인하세요.
 
+## 견적 범위 작성 가이드
+
+견적서에서 작업 범위, 수정 횟수와 추가 요청을 정리하는 방법을 [실전 체크리스트와 예문](docs/freelance-quote-scope.md)으로 정리했습니다.
+
 ## 데이터와 사용 조건
 
 유료 앱은 내려받은 HTML 파일을 브라우저에서 여는 방식입니다. 견적·고객 정보는 앱 서버로 전송되지 않고 사용자의 브라우저 저장 공간에 남습니다. 브라우저 데이터 삭제나 기기 고장으로 기록이 사라질 수 있으니 JSON 백업을 별도로 보관하세요.
